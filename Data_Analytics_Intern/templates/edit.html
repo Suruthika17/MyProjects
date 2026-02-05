@@ -1,0 +1,106 @@
+<!-- edit.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juice Shop - Edit Customer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            min-height: 100vh; 
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            padding: 1rem;
+        }
+        .container { 
+            background: rgba(255,255,255,0.95); 
+            margin: 2rem auto; 
+            padding: 2.5rem; 
+            border-radius: 20px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); 
+            width: 100%; max-width: 500px; 
+        }
+        h2 { text-align: center; color: #f39c12; margin-bottom: 2rem; font-size: 1.8rem; }
+        .customer-preview { 
+            text-align: center; margin-bottom: 2rem; padding: 1.5rem; 
+            background: linear-gradient(135deg, #fff2cc, #ffeaa7); border-radius: 15px; 
+        }
+        .customer-preview img { 
+            width: 100px; height: 100px; object-fit: cover; border-radius: 50%; 
+            border: 4px solid #f39c12; margin-bottom: 1rem; box-shadow: 0 8px 20px rgba(243,156,18,0.3);
+        }
+        .preview-name { font-size: 1.5rem; color: #e67e22; font-weight: bold; }
+        form { display: flex; flex-direction: column; gap: 1.2rem; }
+        label { font-weight: bold; color: #555; margin-bottom: 0.3rem; }
+        input[type="text"], input[type="tel"], input[type="email"], input[type="password"], input[type="file"] { 
+            padding: 14px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1rem; transition: all 0.3s; 
+        }
+        input:focus { outline: none; border-color: #f39c12; box-shadow: 0 0 0 3px rgba(243,156,18,0.1); }
+        input[type="radio"], input[type="checkbox"] { margin-right: 0.7rem; transform: scale(1.3); accent-color: #f39c12; }
+        .radio-group, .checkbox-group { 
+            display: flex; flex-direction: column; gap: 0.8rem; 
+            background: #fff8e1; padding: 1rem; border-radius: 10px; border: 2px solid #fdebd0; 
+        }
+        .radio-group label, .checkbox-group label { 
+            cursor: pointer; font-weight: normal; margin: 0; padding: 0.3rem; border-radius: 6px; transition: background 0.2s; 
+        }
+        .radio-group label:hover, .checkbox-group label:hover { background: rgba(243,156,18,0.1); }
+        .button-group { display: flex; gap: 1rem; }
+        button, .cancel-btn { 
+            flex: 1; padding: 15px; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; 
+            transition: transform 0.3s; 
+        }
+        button { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(243,156,18,0.3); }
+        .cancel-btn { background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; text-decoration: none; text-align: center; }
+        .cancel-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(149,165,166,0.3); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>✏️ Edit Customer #{{ customer.id }}</h2>
+        
+        <div class="customer-preview">
+            {% if customer.img %}
+                <img src="{{ url_for('static', filename='uploads/' + customer.img) }}" alt="{{ customer.name }}">
+            {% else %}
+                <div style="width: 100px; height: 100px; background: #f8f9fa; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem;">👤</div>
+            {% endif %}
+            <div class="preview-name">{{ customer.name }}</div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            <label>Name:</label><input type="text" name="name" value="{{ customer.name }}" required>
+            <label>Phone:</label><input type="tel" name="num" value="{{ customer.num }}" required>
+            <label>Email:</label><input type="email" name="email" value="{{ customer.email }}" required>
+            <label>Password:</label><input type="password" name="pass" value="{{ customer.pass }}" required>
+            
+            <label>Gender:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="gender" value="Male" {% if customer.gender == 'Male' %}checked{% endif %} required> 👨 Male</label>
+                <label><input type="radio" name="gender" value="Female" {% if customer.gender == 'Female' %}checked{% endif %}> 👩 Female</label>
+                <label><input type="radio" name="gender" value="Other" {% if customer.gender == 'Other' %}checked{% endif %}> ⚧️ Other</label>
+            </div>
+            
+            <label>Favorite Juices (Select Multiple):</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="fav" value="Mango" {% if 'Mango' in fav_selected %}checked{% endif %}> 🥭 Mango</label>
+                <label><input type="checkbox" name="fav" value="Orange" {% if 'Orange' in fav_selected %}checked{% endif %}> 🍊 Orange</label>
+                <label><input type="checkbox" name="fav" value="Pineapple" {% if 'Pineapple' in fav_selected %}checked{% endif %}> 🍍 Pineapple</label>
+                <label><input type="checkbox" name="fav" value="Watermelon" {% if 'Watermelon' in fav_selected %}checked{% endif %}> 🍉 Watermelon</label>
+                <label><input type="checkbox" name="fav" value="Lemon" {% if 'Lemon' in fav_selected %}checked{% endif %}> 🍋 Lemon</label>
+                <label><input type="checkbox" name="fav" value="Apple" {% if 'Apple' in fav_selected %}checked{% endif %}> 🍎 Apple</label>
+                <label><input type="checkbox" name="fav" value="Grape" {% if 'Grape' in fav_selected %}checked{% endif %}> 🍇 Grape</label>
+                <label><input type="checkbox" name="fav" value="Mixed" {% if 'Mixed' in fav_selected %}checked{% endif %}> 🍹 Mixed Fruit</label>
+            </div>
+            
+            <label>New Photo (optional):</label><input type="file" name="img" accept="image/*">
+            <div class="button-group">
+                <button type="submit">💾 Update Customer</button>
+                <a href="{{ url_for('view') }}" class="cancel-btn">❌ Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
